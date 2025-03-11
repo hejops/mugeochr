@@ -1,0 +1,5 @@
+/* if omitted, will not be rendered (?) */
+.leaflet-container {
+  height: 400px;
+  width: 800px;
+}
