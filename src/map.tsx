@@ -12,7 +12,6 @@ const position: LatLngTuple = [51.505, -0.09];
 export default function MyMap() {
   return (
     <>
-      <h1>hello</h1>
       <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
         {/* 
 	{s} means one of the available subdomains (used sequentially to help
