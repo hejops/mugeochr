@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import MyMap from "./map.tsx";
@@ -25,15 +25,31 @@ import { Slider } from "@/components/ui/slider"; // equivalent to "./components/
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
 
+function App() {
+  const [sliderValue, setState] = useState(1500);
+
+  return (
+    <>
+      <h1>Map</h1>
+      <MyMap value={sliderValue} />
+
+      <br />
+
+      <h2>Year</h2>
+      <Slider //
+        defaultValue={[sliderValue]}
+        min={1100}
+        max={2000 /* TODO: current year? */}
+        step={1}
+        onValueChange={(v) => setState(v[0])}
+      />
+      {sliderValue}
+    </>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <h1>hello</h1>
-    <MyMap />
-    slider
-    <Slider //
-      defaultValue={[33]}
-      max={100}
-      step={1}
-    />
+    <App />
   </StrictMode>,
 );

@@ -9,7 +9,7 @@ const position: LatLngTuple = [51.505, -0.09];
 
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
-export default function MyMap() {
+export default function MyMap({ value }: { value: number }) {
   return (
     <>
       <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
@@ -28,7 +28,7 @@ export default function MyMap() {
         <Marker position={position}>
           <Popup>
             <b>Hello world!</b>
-            <br />I am a popup.
+            <br />I am a popup. {value}
           </Popup>
         </Marker>
       </MapContainer>
