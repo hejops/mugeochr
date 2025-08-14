@@ -26,19 +26,32 @@ function App() {
   const thisYear = new Date().getFullYear();
 
   const [sliderValue, setState] = useState(1685);
-  const [place, setPlace] = useState<string>();
+  const [place, setPlace] = useState<string>(); // final string
+  const [input, setInput] = useState<string>(); // intermediate string
 
   return (
     <>
       <h1>Map: {place}</h1>
 
-      <Input // TODO: need form? (input+button)
-        // https://github.com/aptos-labs/move-by-examples/blob/ca26e84cd/nft-marketplace/frontend/src/app/mint/page.tsx#L118
-        onChange={(e) => {
-          setPlace(e.target.value);
+      <form
+        // https://github.com/alexeagleson/nextjs-fullstack-app-template/blob/8e788edb85b0e776f0ebcd04cfe6072f81c606da/README.app.md?plain=1#L505
+        onSubmit={(e) => {
+          e.preventDefault(); // otherwise page is reloaded
+
+          setPlace(input);
+          setInput("");
+
+          // TODO: fetch
           // curl 'https://photon.komoot.io/api?q=london%20bridge&limit=10&lang=en' | jq '.features[]|.properties.name'
         }}
-      />
+      >
+        <input
+          type="text"
+          placeholder="london"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+      </form>
 
       <MapComponent value={sliderValue} />
 
