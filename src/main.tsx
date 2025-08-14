@@ -1,8 +1,3 @@
-import { StrictMode, useState } from "react";
-import { createRoot } from "react-dom/client";
-
-import MyMap from "./map.tsx";
-
 // installing tailwind -and- shadcn is a shocking amount of busywork; can this
 // be scripted?
 //
@@ -19,19 +14,33 @@ import MyMap from "./map.tsx";
 // 8. npx shadcn@latest init
 // 9. npx shadcn@latest add <component>
 
-// npx shadcn@latest add slider
-import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
-
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
+import { StrictMode, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
+import MapComponent from "./map.tsx";
 
 function App() {
+  const thisYear = new Date().getFullYear();
+
   const [sliderValue, setState] = useState(1685);
+  const [place, setPlace] = useState<string>();
 
   return (
     <>
-      <h1>Map</h1>
-      <MyMap value={sliderValue} />
+      <h1>Map: {place}</h1>
+
+      <Input // TODO: need form? (input+button)
+        // https://github.com/aptos-labs/move-by-examples/blob/ca26e84cd/nft-marketplace/frontend/src/app/mint/page.tsx#L118
+        onChange={(e) => {
+          setPlace(e.target.value);
+          // curl 'https://photon.komoot.io/api?q=london%20bridge&limit=10&lang=en' | jq '.features[]|.properties.name'
+        }}
+      />
+
+      <MapComponent value={sliderValue} />
 
       <br />
 
@@ -39,7 +48,7 @@ function App() {
       <Slider //
         defaultValue={[sliderValue]}
         min={1100}
-        max={new Date().getFullYear()}
+        max={thisYear}
         step={1}
         onValueChange={(v) => setState(v[0])}
       />
