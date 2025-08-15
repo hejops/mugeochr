@@ -16,7 +16,7 @@
 
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
-import { StrictMode, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
@@ -29,6 +29,37 @@ function App() {
   const [place, setPlace] = useState<string>(); // final string
   const [input, setInput] = useState<string>(); // intermediate string
 
+  // component funcs cannot be async; async funcs must be declared inside a
+  // useEffect
+  // https://react.dev/reference/react/useEffect#fetching-data-with-effects
+  // https://stackoverflow.com/a/57856876
+  useEffect(() => {
+    type PhotonResult = {
+      name: string;
+      coords: [number, number];
+    };
+    // React advises to declare the async function directly inside useEffect
+    async function photon(s?: string) {
+      if (!s) return;
+      const url = `https://photon.komoot.io/api?q=${s.replace(" ", "%20")}&limit=10&lang=en`;
+      const res: PhotonResult = await fetch(url).then(async (r) =>
+        (await r.json()).features
+          .map((x: any) => {
+            return {
+              name: x.properties.name,
+              coords: x.geometry.coordinates,
+            };
+          })
+          .find((x: PhotonResult) => x.name.toLowerCase() === s),
+      );
+      // setPlace(x.coords.toString());
+      alert("setting place to " + res.name);
+      setPlace(res.name);
+    }
+
+    photon(place);
+  }, [place]);
+
   return (
     <>
       <h1>Map: {place}</h1>
@@ -38,11 +69,8 @@ function App() {
         onSubmit={(e) => {
           e.preventDefault(); // otherwise page is reloaded
 
-          setPlace(input);
+          setPlace(input); // TODO: this causes 2 mutations of `place`; we only want 1
           setInput("");
-
-          // TODO: fetch
-          // curl 'https://photon.komoot.io/api?q=london%20bridge&limit=10&lang=en' | jq '.features[]|.properties.name'
         }}
       >
         <input
