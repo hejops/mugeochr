@@ -7,8 +7,10 @@ import {
   useMap,
   ZoomControl,
 } from "react-leaflet";
+import type { Composer } from "./db";
 
 const london: LatLngTuple = [51.505, -0.09];
+const eisenach: LatLngTuple = [50.976111, 10.320556];
 
 // https://leafletjs.com/examples/quick-start/example.html
 // https://react-leaflet.js.org/docs/api-map/#mapcontainer
@@ -25,22 +27,22 @@ function RecenterMap({ center, zoom }: { center: LatLngTuple; zoom: number }) {
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
 export default function MapComponent({
-  year,
-  center = london,
+  center,
+  composers,
 }: {
-  year: number;
-  center?: LatLngTuple;
+  center: LatLngTuple;
+  composers?: Composer[];
 }) {
   const [lat, lng] = center;
   return (
     <>
       <MapContainer
         center={center}
-        zoom={13}
+        zoom={4} // europe
         scrollWheelZoom={false}
         attributionControl={false}
       >
-        <RecenterMap center={center} zoom={13} />
+        <RecenterMap center={center} zoom={4} />
 
         {/* 
 	{s} means one of the available subdomains (used sequentially to help
@@ -54,12 +56,16 @@ export default function MapComponent({
 	https://leafletjs.com/reference.html#tilelayer 
 	*/}
         <TileLayer url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} />
-        <Marker position={center}>
-          <Popup>
-            <b>Hello world!</b>
-            <br />I am a popup. {year}
-          </Popup>
-        </Marker>
+        {composers
+          ? composers.map((c) => (
+              <Marker position={c.birthplace}>
+                <Popup>
+                  {c.name}
+                  <br />({c.dod ? `${c.dob} - ${c.dod}` : `B: ${c.dob}`})
+                </Popup>
+              </Marker>
+            ))
+          : ""}
       </MapContainer>
     </>
   );

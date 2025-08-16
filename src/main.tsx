@@ -22,24 +22,20 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
+import { type Composer, getLivingComposers } from "./db.ts";
 import MapComponent from "./map.tsx";
 
 function App() {
-  const thisYear = new Date().getFullYear();
-
-  const [sliderValue, setState] = useState(1685);
-
   const [input, setInput] = useState<string>(); // growable string (1)
   const [searchTerm, setSearchTerm] = useState<string>(); // intermediate string (2)
   const [place, setPlace] = useState<string>(); // final string (3)
-
-  const [center, setCenter] = useState<LatLngTuple>();
 
   // component funcs cannot be async; async funcs must be declared inside a
   // useEffect
   // https://react.dev/reference/react/useEffect#fetching-data-with-effects
   // https://stackoverflow.com/a/57856876
   useEffect(() => {
+    // {{{
     type PhotonResult = {
       name: string;
       coords: [number, number];
@@ -66,13 +62,30 @@ function App() {
 
     photon(searchTerm);
   }, [searchTerm]);
+  // }}}
+
+  const thisYear = new Date().getFullYear();
+  const [sliderValue, setSliderValue] = useState(1700);
+
+  const eisenach: LatLngTuple = [50.976111, 10.320556];
+  const [center, setCenter] = useState(eisenach);
+  const [composers, setComposers] = useState<Composer[]>();
+
+  useEffect(() => {
+    const c = getLivingComposers(sliderValue);
+    setComposers(c);
+    if (c.length === 0) {
+      return;
+    }
+    setCenter(c[0].birthplace);
+  }, [sliderValue]);
 
   return (
     <>
-      <h1>Map{place ? ": " + place : undefined}</h1>
+      <h1>Map</h1>
 
       <form
-        // https://github.com/alexeagleson/nextjs-fullstack-app-template/blob/8e788edb85b0e776f0ebcd04cfe6072f81c606da/README.app.md?plain=1#L505
+        // https://github.com/alexeagleson/nextjs-fullstack-app-template/blob/8e788edb85b0e/README.app.md?plain=1#L505
         onSubmit={(e) => {
           e.preventDefault(); // otherwise page is reloaded
 
@@ -88,17 +101,20 @@ function App() {
         />
       </form>
 
-      <MapComponent year={sliderValue} center={center} />
+      <MapComponent center={center} composers={composers} />
 
       <br />
 
       <h2>Year</h2>
-      <Slider //
+      <Slider
         defaultValue={[sliderValue]}
-        min={1100}
+        min={1301}
         max={thisYear}
         step={1}
-        onValueChange={(v) => setState(v[0])}
+        onValueChange={(v) => {
+          const year = v[0];
+          setSliderValue(year);
+        }}
       />
       {sliderValue}
     </>

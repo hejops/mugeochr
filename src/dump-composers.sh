@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# generate a sqlite dump of composers on wikidata with birthplace, dob, dod
-# (optional), and a list of works. birthplaces raw wikidata urls and are not
-# resolved (yet)
+# generate a json dump of composers on wikidata with birthplace, dob, dod
+# (optional)
 
 urlenc() {
 	node --eval "console.log(encodeURIComponent(process.argv[1]))" "$1"
 }
+
+# https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples
 
 query=$(
 	cat <<- EOF
@@ -15,7 +16,7 @@ query=$(
 		# unknown columns (?) are silently ignored
 
 		# human and humanLabel are hardcoded
-		SELECT DISTINCT ?birthplace ?dob ?dod ?humanLabel
+		SELECT DISTINCT ?birthplace ?dob ?dod ?humanLabel ?coord
 		WHERE {
 		# https://github.com/zenon/SparqlExample/blob/89f68c8dad/README.md?plain=1#L40
 			?human wdt:P19  ?birthplace .
@@ -27,6 +28,9 @@ query=$(
 
 			# ?human wdt:P101 wd:Q105107008 . # field = composition (not all have field)
 
+		# https://github.com/CarnegieHall/linked-data/blob/b925e24317/sample-wikidata-queries.md?plain=1#L67
+			?birthplace wdt:P625 ?coord .
+
 			SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 		} 
 		ORDER BY ?dob
@@ -34,30 +38,11 @@ query=$(
 )
 
 # 0.2 s
-j=$(curl -Ss -H 'Accept: application/sparql-results+json' "https://query.wikidata.org/sparql?query=$(urlenc "$query")" |
-	jq -cr '.results.bindings[] | {
+curl -Ss -H 'Accept: application/sparql-results+json' "https://query.wikidata.org/sparql?query=$(urlenc "$query")" |
+	jq -cr '[.results.bindings[] | {
 		name: .humanLabel.value,
-		birthplace: .birthplace.value,
+		birthplace: .coord.value,
 		dob: .dob.value,
 		dod: .dod.value,
-	}')
-
-csv=tmp.csv
-db=composers.db
-
-# json -> csv -> sqlite
-# https://stackoverflow.com/a/46407771
-{
-	<<< "$j" head -n1 | jq -r 'keys_unsorted | @csv'
-	<<< "$j" jq -r 'map(tostring) | @csv'
-} > "$csv"
-
-rm -rf "$db"
-
-# TODO: set PK name
-cat << EOF | sqlite3 $db
-.mode csv
-.import $csv composers
-EOF
-
-rm "$csv"
+	}]' |
+	sed -r 's/"Point\(([0-9.-]+) ([0-9.-]+)\)"/[\2,\1]/g' > composers.json
