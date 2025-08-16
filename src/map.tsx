@@ -1,18 +1,47 @@
 import type { LatLngTuple } from "leaflet";
-import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  ZoomControl,
+} from "react-leaflet";
 
-const position: LatLngTuple = [51.505, -0.09];
+const london: LatLngTuple = [51.505, -0.09];
 
 // https://leafletjs.com/examples/quick-start/example.html
 // https://react-leaflet.js.org/docs/api-map/#mapcontainer
 // https://react-leaflet.js.org/docs/start-setup/
 
+// https://github.com/Netizen-Teknologi/react-native-maps-leaflet/blob/13ec1e9aa2563f1a540bef6e5fe3ffe96a396bb2/MapView.tsx#L32
+// https://legacy.reactjs.org/docs/jsx-in-depth.html#user-defined-components-must-be-capitalized
+// components cannot return void
+function RecenterMap({ center, zoom }: { center: LatLngTuple; zoom: number }) {
+  useMap().setView(center, zoom);
+  return undefined;
+}
+
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
-export default function MyMap({ value }: { value: number }) {
+export default function MapComponent({
+  year,
+  center = london,
+}: {
+  year: number;
+  center?: LatLngTuple;
+}) {
+  const [lat, lng] = center;
   return (
     <>
-      <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+      <MapContainer
+        center={center}
+        zoom={13}
+        scrollWheelZoom={false}
+        attributionControl={false}
+      >
+        <RecenterMap center={center} zoom={13} />
+
         {/* 
 	{s} means one of the available subdomains (used sequentially to help
 	with browser parallel requests per domain limitation; subdomain values
@@ -24,11 +53,11 @@ export default function MyMap({ value }: { value: number }) {
 
 	https://leafletjs.com/reference.html#tilelayer 
 	*/}
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <Marker position={position}>
+        <TileLayer url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} />
+        <Marker position={center}>
           <Popup>
             <b>Hello world!</b>
-            <br />I am a popup. {value}
+            <br />I am a popup. {year}
           </Popup>
         </Marker>
       </MapContainer>

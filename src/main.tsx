@@ -3,19 +3,21 @@
 //
 // https://tailwindcss.com/docs/installation/using-vite
 // 1. pnpm add tailwindcss @tailwindcss/vite
-// 2. vite.config.ts: import and use plugin (sed-able)
-// 3. src/index.css: @import "tailwindcss"; on top
+// 2. vite.config.ts: import and use plugin-react (sed-able)
+// 3. src/index.css: sed 'i@import "tailwindcss";'
 //
 // https://ui.shadcn.com/docs/installation/vite
-// 4. pnpm add tailwindcss @tailwindcss/vite
-// 5. tsconfig.json, tsconfig.app.json (jq)
+// (4. pnpm add tailwindcss @tailwindcss/vite)
+// 5. tsconfig.json, tsconfig.app.json: baseUrl, paths (jq)
 // 6. pnpm add -D @types/node
 // 7. vite.config.ts: add resolve (sed-able, barely)
 // 8. npx shadcn@latest init
+//
 // 9. npx shadcn@latest add <component>
 
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
+import type { LatLngTuple } from "leaflet";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Input } from "@/components/ui/input";
@@ -26,8 +28,12 @@ function App() {
   const thisYear = new Date().getFullYear();
 
   const [sliderValue, setState] = useState(1685);
-  const [place, setPlace] = useState<string>(); // final string
-  const [input, setInput] = useState<string>(); // intermediate string
+
+  const [input, setInput] = useState<string>(); // growable string (1)
+  const [searchTerm, setSearchTerm] = useState<string>(); // intermediate string (2)
+  const [place, setPlace] = useState<string>(); // final string (3)
+
+  const [center, setCenter] = useState<LatLngTuple>();
 
   // component funcs cannot be async; async funcs must be declared inside a
   // useEffect
@@ -47,29 +53,30 @@ function App() {
           .map((x: any) => {
             return {
               name: x.properties.name,
-              coords: x.geometry.coordinates,
+              coords: x.geometry.coordinates.reverse(), // lnglat
             };
           })
           .find((x: PhotonResult) => x.name.toLowerCase() === s),
       );
       // setPlace(x.coords.toString());
-      alert("setting place to " + res.name);
+      // alert(`setting place to ${res.name} ${res.coords}`);
       setPlace(res.name);
+      setCenter(res.coords);
     }
 
-    photon(place);
-  }, [place]);
+    photon(searchTerm);
+  }, [searchTerm]);
 
   return (
     <>
-      <h1>Map: {place}</h1>
+      <h1>Map{place ? ": " + place : undefined}</h1>
 
       <form
         // https://github.com/alexeagleson/nextjs-fullstack-app-template/blob/8e788edb85b0e776f0ebcd04cfe6072f81c606da/README.app.md?plain=1#L505
         onSubmit={(e) => {
           e.preventDefault(); // otherwise page is reloaded
 
-          setPlace(input); // TODO: this causes 2 mutations of `place`; we only want 1
+          setSearchTerm(input);
           setInput("");
         }}
       >
@@ -81,7 +88,7 @@ function App() {
         />
       </form>
 
-      <MapComponent value={sliderValue} />
+      <MapComponent year={sliderValue} center={center} />
 
       <br />
 
