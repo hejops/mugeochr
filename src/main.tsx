@@ -82,8 +82,7 @@ function App() {
 
   return (
     <>
-      <h1>Map</h1>
-
+      {/*
       <form
         // https://github.com/alexeagleson/nextjs-fullstack-app-template/blob/8e788edb85b0e/README.app.md?plain=1#L505
         onSubmit={(e) => {
@@ -100,6 +99,7 @@ function App() {
           onChange={(e) => setInput(e.target.value)}
         />
       </form>
+	*/}
 
       <MapComponent center={center} composers={composers} />
 

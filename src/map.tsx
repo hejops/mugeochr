@@ -24,6 +24,13 @@ function RecenterMap({ center, zoom }: { center: LatLngTuple; zoom: number }) {
   return undefined;
 }
 
+function formatDates(c: Composer) {
+  const by = c.dob.split("-", 1)[0];
+  if (!c.dod) return `B: ${by}`;
+  const dy = c.dod.split("-", 1)[0];
+  return `${by} - ${dy}`;
+}
+
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
 export default function MapComponent({
@@ -61,7 +68,7 @@ export default function MapComponent({
               <Marker position={c.birthplace}>
                 <Popup>
                   {c.name}
-                  <br />({c.dod ? `${c.dob} - ${c.dod}` : `B: ${c.dob}`})
+                  <br />({formatDates(c)})
                 </Popup>
               </Marker>
             ))
