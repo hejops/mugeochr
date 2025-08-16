@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+out=./src/composers.json
+
+[[ -f $out ]] && exit 0
+
 # generate a json dump of composers on wikidata with birthplace, dob, dod
 # (optional)
 
@@ -45,4 +49,4 @@ curl -Ss -H 'Accept: application/sparql-results+json' "https://query.wikidata.or
 		dob: .dob.value,
 		dod: .dod.value,
 	}]' |
-	sed -r 's/"Point\(([0-9.-]+) ([0-9.-]+)\)"/[\2,\1]/g' > composers.json
+	sed -r 's/"Point\(([0-9.-]+) ([0-9.-]+)\)"/[\2,\1]/g' > "$out"
