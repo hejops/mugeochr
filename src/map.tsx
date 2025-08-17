@@ -49,6 +49,19 @@ function Markers({ composers }: { composers?: Composer[] }) {
   ));
 }
 
+function meanLatLng(coords?: LatLngTuple[]): LatLngTuple {
+  if (!coords) return eisenach;
+  let lat = 0;
+  let lng = 0;
+  for (const c of coords) {
+    lat += c[0];
+    lng += c[1];
+  }
+  lat /= coords.length;
+  lng /= coords.length;
+  return [lat, lng];
+}
+
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
 export default function MapComponent({
@@ -66,7 +79,10 @@ export default function MapComponent({
       scrollWheelZoom={false}
       attributionControl={false}
     >
-      <RecenterMap center={center} zoom={4} />
+      <RecenterMap
+        center={meanLatLng(composers?.map((c) => c.birthplace as LatLngTuple))}
+        zoom={4}
+      />
 
       {/* 
 	{s} means one of the available subdomains (used sequentially to help
@@ -80,7 +96,7 @@ export default function MapComponent({
 	https://leafletjs.com/reference.html#tilelayer 
 	*/}
       <TileLayer url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} />
-      <Markers composers={composers}></Markers>
+      <Markers composers={composers} />
     </MapContainer>
   );
 }
