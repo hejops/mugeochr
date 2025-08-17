@@ -50,7 +50,9 @@ function Markers({ composers }: { composers?: Composer[] }) {
 }
 
 function meanLatLng(coords?: LatLngTuple[]): LatLngTuple {
-  if (!coords) return eisenach;
+  // between 1377 and 1500, there are no 'living' composers
+  if (!coords || coords.length === 0) return eisenach;
+
   let lat = 0;
   let lng = 0;
   for (const c of coords) {
