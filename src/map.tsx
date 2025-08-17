@@ -1,6 +1,5 @@
 // import "leaflet/dist/images/marker-icon-2x.png";
 // import "leaflet/dist/images/marker-shadow.png";
-import "./MapView.scss";
 import type { LatLngTuple } from "leaflet";
 import L from "leaflet";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";

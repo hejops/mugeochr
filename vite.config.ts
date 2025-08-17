@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/mugeochr/", // must match repo name!
+  base: "/mugeochr/", // must match repo name on prod! https://github.com/orgs/community/discussions/61478#discussioncomment-6513265
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
