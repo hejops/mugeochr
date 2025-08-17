@@ -20,6 +20,7 @@ const eisenach: LatLngTuple = [50.976111, 10.320556];
 // https://legacy.reactjs.org/docs/jsx-in-depth.html#user-defined-components-must-be-capitalized
 // components cannot return void
 function RecenterMap({ center, zoom }: { center: LatLngTuple; zoom: number }) {
+  // TODO: average of all composers coords (reduce wild shifting)
   useMap().setView(center, zoom);
   return undefined;
 }
@@ -29,6 +30,23 @@ function formatDates(c: Composer) {
   if (!c.dod) return `B: ${by}`;
   const dy = c.dod.split("-", 1)[0];
   return `${by} - ${dy}`;
+}
+
+function Markers({ composers }: { composers?: Composer[] }) {
+  if (!composers) return null;
+
+  return composers.map((c) => (
+    <Marker position={c.birthplace} key={"c-" + c.name.toLowerCase()}>
+      <Popup>
+        {/* https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a#target */}
+        <a href={c.article} target="_blank" rel="noopener noreferrer">
+          <b>{c.name}</b>
+        </a>
+        <br />
+        <div style={{ textAlign: "center" }}>({formatDates(c)})</div>
+      </Popup>
+    </Marker>
+  ));
 }
 
 // since this is the default function, its name can theoretically be anything
@@ -42,16 +60,15 @@ export default function MapComponent({
 }) {
   const [lat, lng] = center;
   return (
-    <>
-      <MapContainer
-        center={center}
-        zoom={4} // europe
-        scrollWheelZoom={false}
-        attributionControl={false}
-      >
-        <RecenterMap center={center} zoom={4} />
+    <MapContainer
+      center={center}
+      zoom={4} // europe
+      scrollWheelZoom={false}
+      attributionControl={false}
+    >
+      <RecenterMap center={center} zoom={4} />
 
-        {/* 
+      {/* 
 	{s} means one of the available subdomains (used sequentially to help
 	with browser parallel requests per domain limitation; subdomain values
 	are specified in options; a, b or c by default, can be omitted), {z} —
@@ -62,22 +79,8 @@ export default function MapComponent({
 
 	https://leafletjs.com/reference.html#tilelayer 
 	*/}
-        <TileLayer url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} />
-        {composers
-          ? composers.map((c) => (
-              <Marker position={c.birthplace}>
-                <Popup>
-                  {/* https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a#target */}
-                  <a href={c.article} target="_blank" rel="noopener noreferrer">
-                    <b>{c.name}</b>
-                  </a>
-                  <br />
-                  <div style={{ textAlign: "center" }}>({formatDates(c)})</div>
-                </Popup>
-              </Marker>
-            ))
-          : ""}
-      </MapContainer>
-    </>
+      <TileLayer url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} />
+      <Markers composers={composers}></Markers>
+    </MapContainer>
   );
 }
