@@ -67,8 +67,12 @@ export default function MapComponent({
           ? composers.map((c) => (
               <Marker position={c.birthplace}>
                 <Popup>
-                  {c.name}
-                  <br />({formatDates(c)})
+                  {/* https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a#target */}
+                  <a href={c.article} target="_blank" rel="noopener noreferrer">
+                    <b>{c.name}</b>
+                  </a>
+                  <br />
+                  <div style={{ textAlign: "center" }}>({formatDates(c)})</div>
                 </Popup>
               </Marker>
             ))

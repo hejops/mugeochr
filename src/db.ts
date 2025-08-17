@@ -34,6 +34,7 @@ export type Composer = {
   birthplace: LatLngTuple;
   dob: string;
   dod: string | null;
+  article: string;
 };
 
 export function getLivingComposers(year: number): Composer[] {
