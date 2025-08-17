@@ -20,12 +20,15 @@ import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
 import type { LatLngTuple } from "leaflet";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
 import { type Composer, getLivingComposers } from "./db.ts";
-import MapComponent from "./map.tsx";
+import MapComponent, { eisenach } from "./map.tsx";
+
+// TODO: bundle with vite
 
 function App() {
+  // {{{
+  /*
   const [input, setInput] = useState<string>(); // growable string (1)
   const [searchTerm, setSearchTerm] = useState<string>(); // intermediate string (2)
   const [place, setPlace] = useState<string>(); // final string (3)
@@ -35,7 +38,6 @@ function App() {
   // https://react.dev/reference/react/useEffect#fetching-data-with-effects
   // https://stackoverflow.com/a/57856876
   useEffect(() => {
-    // {{{
     type PhotonResult = {
       name: string;
       coords: [number, number];
@@ -62,23 +64,15 @@ function App() {
 
     photon(searchTerm);
   }, [searchTerm]);
+  */
   // }}}
 
   const thisYear = new Date().getFullYear();
-  const [sliderValue, setSliderValue] = useState(1700);
-
-  const eisenach: LatLngTuple = [50.976111, 10.320556];
+  const [year, setYear] = useState(1700);
   const [center, setCenter] = useState(eisenach);
-  const [composers, setComposers] = useState<Composer[]>();
 
-  useEffect(() => {
-    const c = getLivingComposers(sliderValue);
-    setComposers(c);
-    if (c.length === 0) {
-      return;
-    }
-    setCenter(c[0].birthplace);
-  }, [sliderValue]);
+  const [composers, setComposers] = useState<Composer[]>([]);
+  useEffect(() => setComposers(getLivingComposers(year)), [year]);
 
   return (
     <>
@@ -101,22 +95,21 @@ function App() {
       </form>
 	*/}
 
-      <MapComponent center={center} composers={composers} />
+      <div style={{ alignContent: "center" }}>
+        <MapComponent center={center} composers={composers} />
+      </div>
 
       <br />
 
       <h2>Year</h2>
       <Slider
-        defaultValue={[sliderValue]}
+        defaultValue={[year]}
         min={1301}
         max={thisYear}
         step={1}
-        onValueChange={(v) => {
-          const year = v[0];
-          setSliderValue(year);
-        }}
+        onValueChange={(v) => setYear(v[0])}
       />
-      {sliderValue}
+      {year}
     </>
   );
 }

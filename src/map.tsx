@@ -9,8 +9,7 @@ import {
 } from "react-leaflet";
 import type { Composer } from "./db";
 
-const london: LatLngTuple = [51.505, -0.09];
-const eisenach: LatLngTuple = [50.976111, 10.320556];
+export const eisenach: LatLngTuple = [50.976111, 10.320556];
 
 // https://leafletjs.com/examples/quick-start/example.html
 // https://react-leaflet.js.org/docs/api-map/#mapcontainer
@@ -32,9 +31,7 @@ function formatDates(c: Composer) {
   return `${by} - ${dy}`;
 }
 
-function Markers({ composers }: { composers?: Composer[] }) {
-  if (!composers) return null;
-
+function Markers({ composers }: { composers: Composer[] }) {
   return composers.map((c) => (
     <Marker position={c.birthplace} key={"c-" + c.name.toLowerCase()}>
       <Popup>
@@ -71,7 +68,7 @@ export default function MapComponent({
   composers,
 }: {
   center: LatLngTuple;
-  composers?: Composer[];
+  composers: Composer[];
 }) {
   const [lat, lng] = center;
   return (
@@ -82,7 +79,7 @@ export default function MapComponent({
       attributionControl={false}
     >
       <RecenterMap
-        center={meanLatLng(composers?.map((c) => c.birthplace as LatLngTuple))}
+        center={meanLatLng(composers.map((c) => c.birthplace as LatLngTuple))}
         zoom={4}
       />
 
