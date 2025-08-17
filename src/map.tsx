@@ -1,6 +1,19 @@
+// import "leaflet/dist/images/marker-icon-2x.png";
+// import "leaflet/dist/images/marker-shadow.png";
+import "./MapView.scss";
 import type { LatLngTuple } from "leaflet";
+import L from "leaflet";
+import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import type { Composer } from "./db";
+
+// https://github.com/ionic-team/ionic-react-conference-app/blob/616068e5ebce8f2a72b15bc331d8e63e5bda7eb3/src/pages/MapView.tsx#L20
+L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
+L.Icon.Default.prototype.options.iconRetinaUrl = markerIconRetinaUrl;
+L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
+L.Icon.Default.imagePath = "";
 
 export const eisenach: LatLngTuple = [50.976111, 10.320556];
 
