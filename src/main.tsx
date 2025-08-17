@@ -74,6 +74,14 @@ function App() {
   const [composers, setComposers] = useState<Composer[]>([]);
   useEffect(() => setComposers(getLivingComposers(year)), [year]);
 
+  const divCenter = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
+  } as const;
+
   return (
     <>
       {/*
@@ -95,21 +103,25 @@ function App() {
       </form>
 	*/}
 
-      <div style={{ alignContent: "center" }}>
+      <div style={divCenter}>
         <MapComponent center={center} composers={composers} />
       </div>
 
       <br />
 
-      <h2>Year</h2>
-      <Slider
-        defaultValue={[year]}
-        min={1301}
-        max={thisYear}
-        step={1}
-        onValueChange={(v) => setYear(v[0])}
-      />
-      {year}
+      <div style={{ ...divCenter, width: "33%" }}>
+        <Slider
+          defaultValue={[year]}
+          min={1301}
+          max={thisYear}
+          step={1}
+          onValueChange={(v) => setYear(v[0])}
+        />
+      </div>
+
+      <br />
+
+      <div style={divCenter}>Year: {year}</div>
     </>
   );
 }
