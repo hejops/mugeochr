@@ -51,5 +51,5 @@ curl -Ss -H 'Accept: application/sparql-results+json' "https://query.wikidata.or
 		dob: .dob.value,
 		dod: .dod.value,
 		article: .article.value,
-	}]' |
+	}] | unique_by(.name)' |
 	sed -r 's/"Point\(([0-9.-]+) ([0-9.-]+)\)"/[\2,\1]/g' > "$out"
