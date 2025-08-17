@@ -20,6 +20,9 @@ importers:
       '@types/leaflet':
         specifier: ^1.9.16
         version: 1.9.20
+      '@types/react':
+        specifier: ^19.0.10
+        version: 19.1.10
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -48,9 +51,6 @@ importers:
       '@types/node':
         specifier: ^22.13.10
         version: 22.17.2
-      '@types/react':
-        specifier: ^19.0.10
-        version: 19.1.10
       '@types/react-dom':
         specifier: ^19.0.4
         version: 19.1.7(@types/react@19.1.10)
