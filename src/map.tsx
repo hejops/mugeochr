@@ -1,12 +1,5 @@
 import type { LatLngTuple } from "leaflet";
-import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMap,
-  ZoomControl,
-} from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import type { Composer } from "./db";
 
 export const eisenach: LatLngTuple = [50.976111, 10.320556];
@@ -64,13 +57,12 @@ function meanLatLng(coords?: LatLngTuple[]): LatLngTuple {
 // since this is the default function, its name can theoretically be anything
 // (even lowercase)
 export default function MapComponent({
-  center,
+  center = eisenach,
   composers,
 }: {
-  center: LatLngTuple;
+  center?: LatLngTuple;
   composers: Composer[];
 }) {
-  const [lat, lng] = center;
   return (
     <MapContainer
       center={center}

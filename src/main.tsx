@@ -17,12 +17,11 @@
 
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
-import type { LatLngTuple } from "leaflet";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
 import { type Composer, getLivingComposers } from "./db.ts";
-import MapComponent, { eisenach } from "./map.tsx";
+import MapComponent from "./map.tsx";
 
 // TODO: bundle with vite
 
@@ -69,7 +68,6 @@ function App() {
 
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(1700);
-  const [center, setCenter] = useState(eisenach);
 
   const [composers, setComposers] = useState<Composer[]>([]);
   useEffect(() => setComposers(getLivingComposers(year)), [year]);
@@ -104,7 +102,7 @@ function App() {
 	*/}
 
       <div style={divCenter}>
-        <MapComponent center={center} composers={composers} />
+        <MapComponent composers={composers} />
       </div>
 
       <br />
