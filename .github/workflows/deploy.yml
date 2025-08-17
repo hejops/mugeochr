@@ -1,4 +1,5 @@
 # https://dev.to/daslaw/deploying-a-vite-app-to-github-pages-using-github-actions-a-step-by-step-guide-2p4h
+# set "Settings > Pages > Build and deployment > Source" to GitHub Actions
 
 # Simple workflow for deploying static content to GitHub Pages
 name: Deploy to GitHub Pages
@@ -44,7 +45,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build
-        run: pnpm build
+        run:
+          - pnpm build
+          - ls -la dist
+          - cat ./src/composers.json | wc -c-100
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
