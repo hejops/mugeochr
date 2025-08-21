@@ -37,18 +37,8 @@ export type Composer = {
   article: string;
 };
 
-const cache: Record<number, Composer[]> = {};
-
 export function getLivingComposers(year: number): Composer[] {
   const d = new Date(`${year}-01-01`).toISOString();
-
-  const cached = cache[year];
-  if (cached) return cached;
-
-  // @ts-ignore
-  const res: Composer[] = composers.filter(
-    (x) => x.dob < d && (!x.dod || x.dod > d),
-  );
-  cache[year] = res;
-  return res;
+  // @ts-expect-error
+  return composers.filter((x) => x.dob < d && (!x.dod || x.dod > d));
 }

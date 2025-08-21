@@ -17,10 +17,10 @@
 
 import "./index.css"; // if omitted, map does not appear at all
 import "leaflet/dist/leaflet.css"; // if omitted, produces fragmented tiles!
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Slider } from "@/components/ui/slider"; // equivalent to "./components/ui/slider.tsx"
-import { type Composer, getLivingComposers } from "./db.ts";
+import { getLivingComposers } from "./db.ts";
 import MapComponent from "./map.tsx";
 
 // TODO: bundle with vite
@@ -69,8 +69,10 @@ function App() {
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(1700);
 
-  const [composers, setComposers] = useState<Composer[]>([]);
-  useEffect(() => setComposers(getLivingComposers(year)), [year]);
+  // const [composers, setComposers] = useState<Composer[]>([]);
+  // useEffect(() => setComposers(getLivingComposers(year)), [year]);
+
+  const composers = useMemo(() => getLivingComposers(year), [year]);
 
   const divCenter = {
     display: "flex",
